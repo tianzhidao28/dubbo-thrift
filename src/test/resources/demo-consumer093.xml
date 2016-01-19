@@ -12,16 +12,12 @@
 
 	<dubbo:application name="sodao-consumer-01" owner="consumer-01"/>
 	
-	<dubbo:registry address="zookeeper://127.0.0.1:2181?proxy=thrift"/>
+	<dubbo:registry address="zookeeper://127.0.0.1:2181?proxy=thrift2"/>
 	
 	<!-- <dubbo:protocol name="thrift" threads="100" /> -->
 	
-	<dubbo:reference interface="com.sodao.dubbo.t4.t1.UserService$Iface"
-		id="userService">
-	</dubbo:reference>
-
-	<dubbo:reference interface="com.sodao.dubbo.t4.t2.UserService2$Iface"
-		id="userService2" >
+	<dubbo:reference interface="cn.jpush.dubbo.thritf093.HelloService$Iface"
+		id="helloService">
 	</dubbo:reference>
 	
 </beans>

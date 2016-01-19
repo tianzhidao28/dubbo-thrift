@@ -1,6 +1,6 @@
 package cn.jpush.dubbo.thrift.exchange;
 
-import cn.jpush.dubbo.thrift.common.TBaseTools;
+import cn.jpush.dubbo.thrift.common.ThriftProtocalTools;
 import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.protocol.TProtocol;
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -100,10 +100,10 @@ public class HeaderExchangeServerHandler implements ChannelHandlerDelegate {
             if (msg instanceof ChannelBuffer) {
             	ChannelBuffer input = (ChannelBuffer) msg;
             	ChannelBuffer output = ChannelBuffers.dynamicBuffer();
-            	TProtocol prot = TBaseTools.newProtocol(input, output);
+            	TProtocol prot = ThriftProtocalTools.newBinaryProtocol(input, output);
 				try {
 					TMessage tmessage = prot.readMessageBegin();
-					TBaseTools.createErrorTMessage(prot, tmessage.name, tmessage.seqid, StringUtils.toString(e));
+					ThriftProtocalTools.createErrorTMessage(prot, tmessage.name, tmessage.seqid, StringUtils.toString(e));
 					channel.send(output);
 		            return;
 				} catch (Exception e1) {

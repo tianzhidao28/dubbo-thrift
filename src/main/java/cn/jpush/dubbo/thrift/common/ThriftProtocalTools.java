@@ -9,17 +9,17 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TMessage;
-import org.apache.thrift.protocol.TMessageType;
-import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.protocol.*;
 import org.jboss.netty.buffer.ChannelBuffer;
 
 import cn.jpush.dubbo.thrift.transport.ThriftTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
-public class TBaseTools {
-	
+public class ThriftProtocalTools {
+
+	private static final Logger logger = LoggerFactory.getLogger(ThriftProtocalTools.class);
 	static final ConcurrentMap<String, Class<?>> CACHED_CLASS = new ConcurrentHashMap<String, Class<?>>();
 	static final ConcurrentMap<String, Constructor<?>> CACHED_CONSTRUCTOR = new ConcurrentHashMap<String, Constructor<?>>();
 	
@@ -40,10 +40,31 @@ public class TBaseTools {
 		}
 		return str;
 	}
-	
-	public static TProtocol newProtocol(ChannelBuffer input, ChannelBuffer output) {
+
+	/**
+	 * 纯粹的二进制协议传输
+	 * @param input
+	 * @param output
+     * @return
+     */
+	public static TProtocol newBinaryProtocol(ChannelBuffer input, ChannelBuffer output) {
 		return new TBinaryProtocol(new ThriftTransport(input, output));
 	}
+
+
+	/**
+	 * 多路复用的二进制协议
+	 * @param input
+	 * @param output
+	 * @param serviceName 服务暴露的名称
+	 * @return
+	 */
+	public static TProtocol newTMultiplexedBinaryProtocol(ChannelBuffer input, ChannelBuffer output,String serviceName) {
+		TProtocol protocol = newBinaryProtocol(input,output);
+		TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, serviceName);
+		return new TBinaryProtocol(new ThriftTransport(input, output));
+	}
+
 	
 	public static String getArgsClassName(String serviceName, String methodName, String tag) {
 		return serviceName.substring(0, serviceName.lastIndexOf("$")) + "$" + methodName + tag;
@@ -107,7 +128,15 @@ public class TBaseTools {
 		}
 		throw new TApplicationException(TApplicationException.MISSING_RESULT, "unknown result");
 	}
-	
+
+	/**
+	 * 异常时发送的TMessage
+	 * @param oprot
+	 * @param methodName
+	 * @param id
+	 * @param errMsg
+     * @throws Exception
+     */
 	public static void createErrorTMessage(TProtocol oprot, String methodName, int id, String errMsg)
 			throws Exception {
 		TMessage tmessage = new TMessage(methodName, TMessageType.EXCEPTION, id);
@@ -119,5 +148,16 @@ public class TBaseTools {
 		} catch (TException e) {
 			e.printStackTrace();
 		}
+	}
+
+
+	/**
+	 * 通过 接口 *****.Iface得到 className的简称作为 serviceName
+	 * @param clazz 接口类 Iface
+	 * @return serviceName
+     */
+	public static String getServiceNameByInterface(Class clazz) {
+		// 理论上className一定是 XXXXX$Iface
+		return clazz.getSimpleName().replaceAll("\\.Iface$","");
 	}
 }

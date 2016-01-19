@@ -1,1 +1,2 @@
-thrift2=com.sodao.dubbo.thrift.proxy.ThriftProxyFactory
+thrift2=cn.jpush.dubbo.thrift.proxy.ThriftProxyFactory
+thrift_multiplexed=cn.jpush.dubbo.thrift.proxy.ThriftMutiServiceProxyFactory

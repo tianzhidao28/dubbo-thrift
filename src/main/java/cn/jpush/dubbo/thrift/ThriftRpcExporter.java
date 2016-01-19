@@ -20,11 +20,8 @@ import java.util.Map;
 import com.alibaba.dubbo.rpc.Exporter;
 import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.protocol.AbstractExporter;
-/**
- * InjvmExporter
- * 
- * @author william.liangf
- */
+
+
 public class ThriftRpcExporter<T> extends AbstractExporter<T> {
 
     private final String                        key;

@@ -1,16 +1,8 @@
 package cn.jpush.dubbo.thrift;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.ReentrantLock;
-
-import org.jboss.netty.buffer.ChannelBuffer;
-
+import cn.jpush.dubbo.thrift.common.ThriftProtocalTools;
+import cn.jpush.dubbo.thrift.exchange.HeaderExchanger2;
+import cn.jpush.dubbo.thrift.netty.NettyTransporter2;
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
@@ -18,46 +10,43 @@ import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.remoting.Channel;
 import com.alibaba.dubbo.remoting.RemotingException;
 import com.alibaba.dubbo.remoting.Transporter;
-import com.alibaba.dubbo.remoting.exchange.ExchangeChannel;
-import com.alibaba.dubbo.remoting.exchange.ExchangeClient;
-import com.alibaba.dubbo.remoting.exchange.ExchangeHandler;
-import com.alibaba.dubbo.remoting.exchange.ExchangeServer;
-import com.alibaba.dubbo.remoting.exchange.Exchangers;
+import com.alibaba.dubbo.remoting.exchange.*;
 import com.alibaba.dubbo.remoting.exchange.support.ExchangeHandlerAdapter;
-import com.alibaba.dubbo.rpc.Exporter;
-import com.alibaba.dubbo.rpc.Invocation;
-import com.alibaba.dubbo.rpc.Invoker;
-import com.alibaba.dubbo.rpc.Protocol;
-import com.alibaba.dubbo.rpc.RpcContext;
-import com.alibaba.dubbo.rpc.RpcException;
-import com.alibaba.dubbo.rpc.RpcInvocation;
+import com.alibaba.dubbo.rpc.*;
 import com.alibaba.dubbo.rpc.protocol.AbstractProtocol;
-//import com.alibaba.dubbo.rpc.protocol.dubbo.DubboExporter;
-//import com.sodao.dubbo.thrift.codec.ThriftExchangeCodec;
-import cn.jpush.dubbo.thrift.common.ThriftProtocalTools;
-import cn.jpush.dubbo.thrift.exchange.HeaderExchanger2;
-import cn.jpush.dubbo.thrift.netty.NettyTransporter2;
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
- *
+ * @author rocyuan
+ * @version thrift-> 0.9.3
+ * @date 2016-01-18
  */
-public class ThriftRpcProtocol extends AbstractProtocol{
+public class ThriftMutiServiceRpcProtocol extends AbstractProtocol{
+
+    private static final Logger logger = LoggerFactory.getLogger(ThriftMutiServiceRpcProtocol.class);
 
     public static final String NAME = "thrift2";
 
-    public static final int DEFAULT_PORT = 28088;
-    
+    public static final int DEFAULT_PORT = 28089;
+
     public final ReentrantLock lock = new ReentrantLock();
-    
-    private final Map<String, ExchangeServer> serverMap = 
+
+    private final Map<String, ExchangeServer> serverMap =
     		new ConcurrentHashMap<String, ExchangeServer>();
- 
-    private final Map<String, ReferenceCountExchangeClient> referenceClientMap = 
-    		new ConcurrentHashMap<String, ReferenceCountExchangeClient>(); 
-    
-    private final ConcurrentMap<String, LazyConnectExchangeClient> ghostClientMap = 
+
+    private final Map<String, ReferenceCountExchangeClient> referenceClientMap =
+    		new ConcurrentHashMap<String, ReferenceCountExchangeClient>();
+
+    private final ConcurrentMap<String, LazyConnectExchangeClient> ghostClientMap =
     		new ConcurrentHashMap<String, LazyConnectExchangeClient>();
-    
+
     private ExchangeHandler requestHandler = new ExchangeHandlerAdapter() {
 
         @Override
@@ -67,6 +56,9 @@ public class ThriftRpcProtocol extends AbstractProtocol{
             	ChannelBuffer buf = (ChannelBuffer) msg;
                 String serviceName = channel.getUrl().getParameter(Constants.INTERFACE_KEY);
                 String serviceKey = serviceKey(channel.getLocalAddress().getPort(), serviceName, null, null );
+
+                logger.debug("Thrift : reply serviceName={},serviceKey={},msg={},channel.url={}",serviceName,serviceKey,msg,channel.getUrl());
+
                 ThriftRpcExporter<?> exporter = (ThriftRpcExporter<?>) exporterMap.get(serviceKey);
                 if (exporter == null) {
                     throw new RemotingException(channel,
@@ -108,16 +100,16 @@ public class ThriftRpcProtocol extends AbstractProtocol{
         }
 
     };
-    
-    private static ThriftRpcProtocol INSTANCE;
 
-    public ThriftRpcProtocol() {
+    private static ThriftMutiServiceRpcProtocol INSTANCE;
+
+    public ThriftMutiServiceRpcProtocol() {
         INSTANCE = this;
     }
     
-    public static ThriftRpcProtocol getThriftRpcProtocol() {
+    public static ThriftMutiServiceRpcProtocol getThriftRpcProtocol() {
         if (INSTANCE == null) {
-            ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(ThriftRpcProtocol.NAME); // load
+            ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(ThriftMutiServiceRpcProtocol.NAME); // load
         }
         return INSTANCE;
     }

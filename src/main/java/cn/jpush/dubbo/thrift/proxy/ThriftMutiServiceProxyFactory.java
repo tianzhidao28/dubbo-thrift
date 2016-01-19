@@ -1,16 +1,7 @@
 package cn.jpush.dubbo.thrift.proxy;
 
 
-import java.util.concurrent.ConcurrentHashMap;
-
-import cn.jpush.dubbo.thrift.common.ThriftConstants;
 import cn.jpush.dubbo.thrift.common.ThriftProtocalTools;
-import org.apache.thrift.TProcessor;
-import org.apache.thrift.protocol.TMessage;
-import org.apache.thrift.protocol.TProtocol;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.bytecode.Proxy;
 import com.alibaba.dubbo.common.logger.Logger;
@@ -19,23 +10,34 @@ import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.proxy.AbstractProxyFactory;
 import com.alibaba.dubbo.rpc.proxy.AbstractProxyInvoker;
 import com.alibaba.dubbo.rpc.proxy.InvokerInvocationHandler;
+import org.apache.thrift.TProcessor;
+import org.apache.thrift.protocol.TMessage;
+import org.apache.thrift.protocol.TProtocol;
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
+
+import java.util.concurrent.ConcurrentHashMap;
+
+
 /**
- * 
- * @author yankai
- * @date 2012-3-28
+ * TODO 未完成版本
+ * @author rocyuan
+ * @date 2016-01-18
+ * @desc 对多路复用协议的支持
  */
-public class ThriftProxyFactory extends AbstractProxyFactory{
+public class ThriftMutiServiceProxyFactory extends AbstractProxyFactory{
 
-	private static final Logger logger = LoggerFactory.getLogger(ThriftProxyFactory.class);
+	private static final Logger logger = LoggerFactory.getLogger(ThriftMutiServiceProxyFactory.class);
 
-	private static final String NAME = "thrift2";
-			
-    @SuppressWarnings("unchecked")
+	static ConcurrentHashMap<Class<?>, TProcessor> serviceClazz2Processor = new ConcurrentHashMap<Class<?>, TProcessor>();
+
+
+	@SuppressWarnings("unchecked")
     public <T> T getProxy(Invoker<T> invoker, Class<?>[] interfaces) {
         return (T) Proxy.getProxy(interfaces).newInstance(new InvokerInvocationHandler(invoker));
     }
 
-    public <T> Invoker<T> getInvoker(T proxy, Class<T> type, final URL url) {
+    public <T> Invoker<T> getInvoker(T proxy, final Class<T> type, final URL url) {
     	
     	final TProcessor processor = getTProcessor(type, proxy);
         
@@ -48,8 +50,8 @@ public class ThriftProxyFactory extends AbstractProxyFactory{
             	
             	ChannelBuffer input = (ChannelBuffer)arguments[arguments.length - 1];
             	ChannelBuffer output = ChannelBuffers.dynamicBuffer();
-
-        		TProtocol prot = ThriftProtocalTools.newBinaryProtocol(input, output);
+				String serviceName = ThriftProtocalTools.getServiceNameByInterface(type);
+        		TProtocol prot = ThriftProtocalTools.newTMultiplexedBinaryProtocol(input,output,serviceName);
         		try {
         			processor.process(prot, prot);
         		} catch (Throwable t) {
@@ -86,5 +88,4 @@ public class ThriftProxyFactory extends AbstractProxyFactory{
 		}
 	}
 	
-	static ConcurrentHashMap<Class<?>, TProcessor> serviceClazz2Processor = new ConcurrentHashMap<Class<?>, TProcessor>();
 }

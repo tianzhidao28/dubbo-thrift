@@ -1,6 +1,6 @@
 package cn.jpush.dubbo.thrift.exchange;
 
-import static cn.jpush.dubbo.thrift.common.TBaseTools.newProtocol;
+import static cn.jpush.dubbo.thrift.common.ThriftProtocalTools.newBinaryProtocol;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,7 +27,7 @@ import com.alibaba.dubbo.remoting.exchange.ResponseCallback;
 import com.alibaba.dubbo.remoting.exchange.ResponseFuture;
 import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.RpcResult;
-import cn.jpush.dubbo.thrift.common.TBaseTools;
+import cn.jpush.dubbo.thrift.common.ThriftProtocalTools;
 
 public class DefaultFuture2 implements ResponseFuture {
 
@@ -54,9 +54,9 @@ public class DefaultFuture2 implements ResponseFuture {
 
 	private final long                            start = System.currentTimeMillis();
 
-	private final String serviceName;
+	private final String                          serviceName;
 	
-	private final String methodName;
+	private final String                          methodName;
 	
 	private volatile long                         sent;
 	    
@@ -114,7 +114,7 @@ public class DefaultFuture2 implements ResponseFuture {
     private Object returnFromResponse() throws RemotingException {
         ChannelBuffer res = response;
         try {
-	        TProtocol iprot = TBaseTools.newProtocol(res, null);
+	        TProtocol iprot = ThriftProtocalTools.newBinaryProtocol(res, null);
 	        TMessage msg = iprot.readMessageBegin();
 			if (msg.type == TMessageType.EXCEPTION) {
 				TApplicationException x = TApplicationException.read(iprot);
@@ -127,10 +127,10 @@ public class DefaultFuture2 implements ResponseFuture {
 	        if (msg.seqid != id) {
 	          throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, methodName + " failed: out of sequence response");
 	        }
-	        Class<?> clazz = TBaseTools.getTBaseClass(serviceName, methodName, "_result");
-	        TBase<?,?> _result = TBaseTools.getTBaseObject(clazz, null, null);
+	        Class<?> clazz = ThriftProtocalTools.getTBaseClass(serviceName, methodName, "_result");
+	        TBase<?,?> _result = ThriftProtocalTools.getTBaseObject(clazz, null, null);
 	        _result.read(iprot);
-	        Object value = TBaseTools.getResult(_result);
+	        Object value = ThriftProtocalTools.getResult(_result);
 	        RpcResult result = new RpcResult(value);
 	        return result;
         } catch (Exception e) {
@@ -140,7 +140,7 @@ public class DefaultFuture2 implements ResponseFuture {
 
     public static void sent(Channel channel, Object message) {
     	ChannelBuffer buf = (ChannelBuffer)message;
-    	int id = TBaseTools.getTMessageId(buf);
+    	int id = ThriftProtocalTools.getTMessageId(buf);
         DefaultFuture2 future = FUTURES.get(id);
         if (future != null) {
             future.doSent();
@@ -152,7 +152,7 @@ public class DefaultFuture2 implements ResponseFuture {
     }
 
     public static void received(Channel channel, ChannelBuffer response) {
-    	int id = TBaseTools.getTMessageId(response);
+    	int id = ThriftProtocalTools.getTMessageId(response);
         try {
             DefaultFuture2 future = FUTURES.remove(id);
             if (future != null) {
@@ -245,7 +245,7 @@ public class DefaultFuture2 implements ResponseFuture {
                         if (System.currentTimeMillis() - future.getStartTimestamp() > future.getTimeout()) {
                         	//这里只需要装TMessage就够了
                         	ChannelBuffer timeoutResponse = ChannelBuffers.dynamicBuffer(64);
-                        	TProtocol prot = newProtocol(null, timeoutResponse);
+                        	TProtocol prot = newBinaryProtocol(null, timeoutResponse);
                         	byte type = future.isSent() ? T_SERVER_TIMEOUT : T_CLIENT_TIMEOUT;
                         	TMessage tmessage = new TMessage(future.getMethod(), type, future.getId());
                             logger.info("RemotingInvocationTimeoutScan TMessage="+tmessage);

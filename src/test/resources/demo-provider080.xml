@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-	<dubbo:application name="kaige" owner="kaige"/>
+	<dubbo:application name="tt_provider1" owner="tt"/>
 	
 	<dubbo:registry address="zookeeper://localhost:2181?proxy=thrift2" client="curator"/>
 	
@@ -20,11 +20,11 @@
 		ref="helloService" protocol="thrift_1" >
 	</dubbo:service>
 
-<!-- 	<dubbo:protocol  id="thrift_2" name="thrift2" port="28090" threads="10" dispatcher="message"/>
+   <dubbo:protocol  id="thrift_2" name="thrift2" port="28090" threads="10" dispatcher="message"/>
 		
 	<bean id="helloService2" class="com.sodao.dubbo.t6.HelloServiceImpl2" /> 
 	<dubbo:service interface="com.sodao.dubbo.t6.HelloService2$Iface"
 		ref="helloService2" protocol="thrift_2" >
-	</dubbo:service> -->
+	</dubbo:service>
 	
 </beans>
