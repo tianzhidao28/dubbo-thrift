@@ -20,7 +20,7 @@ import com.alibaba.dubbo.remoting.exchange.ExchangeHandler;
 import com.alibaba.dubbo.remoting.exchange.ResponseFuture;
 import com.alibaba.dubbo.remoting.exchange.support.DefaultFuture;
 import com.alibaba.dubbo.rpc.RpcInvocation;
-import cn.jpush.dubbo.thrift.common.ThriftProtocalTools;
+import cn.jpush.dubbo.thrift.common.ThriftTools;
 
 
 public class HeaderExchangeChannel2 implements ExchangeChannel {
@@ -71,7 +71,7 @@ public class HeaderExchangeChannel2 implements ExchangeChannel {
     ChannelBuffer createRequestBuffer(int id, RpcInvocation inv) throws RemotingException {
     	 //serialize request
          ChannelBuffer output = ChannelBuffers.dynamicBuffer(512);
-         TProtocol oprot = ThriftProtocalTools.newBinaryProtocol(null, output);
+         TProtocol oprot = ThriftTools.newBinaryProtocol(null, output);
          
          String methodName = inv.getMethodName();
          String serviceName = inv.getAttachment(Constants.PATH_KEY);
@@ -80,9 +80,9 @@ public class HeaderExchangeChannel2 implements ExchangeChannel {
          // TODO 多路复用改造这个地方 serviceName:methodName
          try {
          	oprot.writeMessageBegin(new TMessage(methodName, TMessageType.CALL, id));
- 			String argsServiceName = ThriftProtocalTools.getArgsClassName(serviceName, methodName, "_args");
-            Class<?> clazz = ThriftProtocalTools.getTBaseClass(argsServiceName);
- 			TBase<?, ?> _args = ThriftProtocalTools.getTBaseObject(clazz, parameterTypes, arguments);
+ 			String argsServiceName = ThriftTools.getArgsClassName(serviceName, methodName, "_args");
+            Class<?> clazz = ThriftTools.getTBaseClass(argsServiceName);
+ 			TBase<?, ?> _args = ThriftTools.getTBaseObject(clazz, parameterTypes, arguments);
  			_args.write(oprot);
  		} catch (Exception e) {
  			throw new RemotingException(channel, e);

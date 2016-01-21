@@ -1,6 +1,6 @@
 package cn.jpush.dubbo.thrift.exchange;
 
-import static cn.jpush.dubbo.thrift.common.ThriftProtocalTools.newBinaryProtocol;
+import static cn.jpush.dubbo.thrift.common.ThriftTools.newBinaryProtocol;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,7 +27,7 @@ import com.alibaba.dubbo.remoting.exchange.ResponseCallback;
 import com.alibaba.dubbo.remoting.exchange.ResponseFuture;
 import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.RpcResult;
-import cn.jpush.dubbo.thrift.common.ThriftProtocalTools;
+import cn.jpush.dubbo.thrift.common.ThriftTools;
 
 public class DefaultFuture2 implements ResponseFuture {
 
@@ -114,7 +114,7 @@ public class DefaultFuture2 implements ResponseFuture {
     private Object returnFromResponse() throws RemotingException {
         ChannelBuffer res = response;
         try {
-	        TProtocol iprot = ThriftProtocalTools.newBinaryProtocol(res, null);
+	        TProtocol iprot = ThriftTools.newBinaryProtocol(res, null);
 	        TMessage msg = iprot.readMessageBegin();
 			if (msg.type == TMessageType.EXCEPTION) {
 				TApplicationException x = TApplicationException.read(iprot);
@@ -127,10 +127,10 @@ public class DefaultFuture2 implements ResponseFuture {
 	        if (msg.seqid != id) {
 	          throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, methodName + " failed: out of sequence response");
 	        }
-	        Class<?> clazz = ThriftProtocalTools.getTBaseClass(serviceName, methodName, "_result");
-	        TBase<?,?> _result = ThriftProtocalTools.getTBaseObject(clazz, null, null);
+	        Class<?> clazz = ThriftTools.getTBaseClass(serviceName, methodName, "_result");
+	        TBase<?,?> _result = ThriftTools.getTBaseObject(clazz, null, null);
 	        _result.read(iprot);
-	        Object value = ThriftProtocalTools.getResult(_result);
+	        Object value = ThriftTools.getResult(_result);
 	        RpcResult result = new RpcResult(value);
 	        return result;
         } catch (Exception e) {
@@ -140,7 +140,7 @@ public class DefaultFuture2 implements ResponseFuture {
 
     public static void sent(Channel channel, Object message) {
     	ChannelBuffer buf = (ChannelBuffer)message;
-    	int id = ThriftProtocalTools.getTMessageId(buf);
+    	int id = ThriftTools.getTMessageId(buf);
         DefaultFuture2 future = FUTURES.get(id);
         if (future != null) {
             future.doSent();
@@ -152,7 +152,7 @@ public class DefaultFuture2 implements ResponseFuture {
     }
 
     public static void received(Channel channel, ChannelBuffer response) {
-    	int id = ThriftProtocalTools.getTMessageId(response);
+    	int id = ThriftTools.getTMessageId(response);
         try {
             DefaultFuture2 future = FUTURES.remove(id);
             if (future != null) {

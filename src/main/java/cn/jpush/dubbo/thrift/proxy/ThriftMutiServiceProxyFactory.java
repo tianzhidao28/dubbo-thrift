@@ -1,7 +1,7 @@
 package cn.jpush.dubbo.thrift.proxy;
 
 
-import cn.jpush.dubbo.thrift.common.ThriftProtocalTools;
+import cn.jpush.dubbo.thrift.common.ThriftTools;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.bytecode.Proxy;
 import com.alibaba.dubbo.common.logger.Logger;
@@ -50,8 +50,8 @@ public class ThriftMutiServiceProxyFactory extends AbstractProxyFactory{
             	
             	ChannelBuffer input = (ChannelBuffer)arguments[arguments.length - 1];
             	ChannelBuffer output = ChannelBuffers.dynamicBuffer();
-				String serviceName = ThriftProtocalTools.getServiceNameByInterface(type);
-        		TProtocol prot = ThriftProtocalTools.newTMultiplexedBinaryProtocol(input,output,serviceName);
+				String serviceName = ThriftTools.getServiceNameByInterface(type);
+        		TProtocol prot = ThriftTools.newTMultiplexedBinaryProtocol(input,output,serviceName);
         		try {
         			processor.process(prot, prot);
         		} catch (Throwable t) {
@@ -59,7 +59,7 @@ public class ThriftMutiServiceProxyFactory extends AbstractProxyFactory{
 					input.resetReaderIndex();
 					TMessage tmessage = prot.readMessageBegin();
 					logger.debug("Thrift: in proxy invoke exeception; TMessage = "+tmessage);
-					ThriftProtocalTools.createErrorTMessage(prot, tmessage.name, tmessage.seqid, "Server-Side Error:" + t.toString());
+					ThriftTools.createErrorTMessage(prot, tmessage.name, tmessage.seqid, "Server-Side Error:" + t.toString());
         		} finally {
         			prot.getTransport().flush();
         		}

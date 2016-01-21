@@ -34,7 +34,7 @@ import com.alibaba.dubbo.rpc.RpcInvocation;
 import com.alibaba.dubbo.rpc.protocol.AbstractProtocol;
 //import com.alibaba.dubbo.rpc.protocol.dubbo.DubboExporter;
 //import com.sodao.dubbo.thrift.codec.ThriftExchangeCodec;
-import cn.jpush.dubbo.thrift.common.ThriftProtocalTools;
+import cn.jpush.dubbo.thrift.common.ThriftTools;
 import cn.jpush.dubbo.thrift.exchange.HeaderExchanger2;
 import cn.jpush.dubbo.thrift.netty.NettyTransporter2;
 
@@ -83,7 +83,7 @@ public class ThriftRpcProtocol extends AbstractProtocol{
                 }
 
                 RpcContext.getContext().setRemoteAddress(channel.getRemoteAddress());
-                String method = ThriftProtocalTools.getStringAtAbsoluteIndex(buf, 4);
+                String method = ThriftTools.getStringAtAbsoluteIndex(buf, 4);
                 Invocation inv = new RpcInvocation(method, null, new Object[]{buf});
                 return exporter.getInvoker().invoke(inv);
 

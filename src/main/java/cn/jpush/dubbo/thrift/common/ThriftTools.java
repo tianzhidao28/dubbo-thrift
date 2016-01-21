@@ -6,20 +6,26 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.apache.thrift.TApplicationException;
-import org.apache.thrift.TBase;
-import org.apache.thrift.TException;
+
+import org.apache.thrift.*;
 import org.apache.thrift.protocol.*;
+import org.apache.thrift.server.THsHaServer;
+import org.apache.thrift.server.TServer;
+import org.apache.thrift.server.TThreadedSelectorServer;
+import org.apache.thrift.transport.TFramedTransport;
+import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.jboss.netty.buffer.ChannelBuffer;
 
 import cn.jpush.dubbo.thrift.transport.ThriftTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static cn.jpush.dubbo.thrift.common.ThriftServerType.*;
 
-public class ThriftProtocalTools {
 
-	private static final Logger logger = LoggerFactory.getLogger(ThriftProtocalTools.class);
+public class ThriftTools {
+
+	private static final Logger logger = LoggerFactory.getLogger(ThriftTools.class);
 	static final ConcurrentMap<String, Class<?>> CACHED_CLASS = new ConcurrentHashMap<String, Class<?>>();
 	static final ConcurrentMap<String, Constructor<?>> CACHED_CONSTRUCTOR = new ConcurrentHashMap<String, Constructor<?>>();
 	
@@ -160,4 +166,70 @@ public class ThriftProtocalTools {
 		// 理论上className一定是 XXXXX$Iface
 		return clazz.getSimpleName().replaceAll("\\.Iface$","");
 	}
+
+
+	public static TProcessor getTProcessClass(Class<?> interfaceType , Object impl) {
+
+		String serviceName = interfaceType.getEnclosingClass().getName();
+		String processName = serviceName + "$Processor";
+		try{
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+			Class<?> pclass = classLoader.loadClass(processName);
+
+			if (!TProcessor.class.isAssignableFrom(pclass)) {
+				throw new RuntimeException("ThriftProtocal093服务出错 可能版本不兼容...");
+			}
+			Constructor<?> constructor = pclass.getConstructor(interfaceType);
+			TProcessor processor = (TProcessor) constructor.newInstance(impl);
+			return processor;
+		} catch (Exception e) {
+			throw new RuntimeException("ThriftProtocal093服务出错 可能版本不兼容...",e);
+		}
+
+
+	}
+
+
+	public static TServer createTServer(ThriftServerType serverType, int port, TProcessor processor) {
+
+		TServer server = null;
+		try{
+
+			switch (serverType) {
+				case TThreadPoolServer:
+				case TNonblockingServer:
+					TNonblockingServerSocket serverTransport = new TNonblockingServerSocket(port);
+					TThreadedSelectorServer.Args tArgs = new TThreadedSelectorServer.Args(serverTransport);
+					TProcessorFactory processorFactory = new TProcessorFactory(processor);
+					tArgs.processorFactory(processorFactory);
+					tArgs.transportFactory(new TFramedTransport.Factory());
+					tArgs.protocolFactory( new TBinaryProtocol.Factory(true, true));
+					// 使用非阻塞式IO，服务端和客户端需要指定TFramedTransport数据传输的方式
+					server = new TThreadedSelectorServer(tArgs);
+					break;
+				case THsHaServer:
+				default:
+					TNonblockingServerSocket tnbSocketTransport = new TNonblockingServerSocket(port);
+					org.apache.thrift.server.THsHaServer.Args thhsArgs = new THsHaServer.Args(tnbSocketTransport);
+					thhsArgs.processor(processor);
+					thhsArgs.transportFactory(new TFramedTransport.Factory());
+					thhsArgs.protocolFactory(new TBinaryProtocol.Factory());
+
+					//半同步半异步的服务端模型，需要指定为： TFramedTransport 数据传输的方式
+					server = new THsHaServer(thhsArgs);
+
+
+			}
+		} catch (Exception e) {
+
+
+		}
+
+		return server;
+
+
+	}
+
+
 }

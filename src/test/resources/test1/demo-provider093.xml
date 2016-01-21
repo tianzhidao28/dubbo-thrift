@@ -12,7 +12,7 @@
 
 	<dubbo:application name="rocyuan-provider-01" owner="rocyuan"/>
 
-	<dubbo:registry address="zookeeper://localhost:2181?proxy=thrift2"/>
+	<dubbo:registry address="zookeeper://localhost:2181"/>
 
 	    <!-- 用registry协议配置监视器 -->
     <!-- <dubbo:monitor protocol="registry" /> -->

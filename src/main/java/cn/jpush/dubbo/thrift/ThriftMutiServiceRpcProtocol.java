@@ -1,6 +1,6 @@
 package cn.jpush.dubbo.thrift;
 
-import cn.jpush.dubbo.thrift.common.ThriftProtocalTools;
+import cn.jpush.dubbo.thrift.common.ThriftTools;
 import cn.jpush.dubbo.thrift.exchange.HeaderExchanger2;
 import cn.jpush.dubbo.thrift.netty.NettyTransporter2;
 import com.alibaba.dubbo.common.Constants;
@@ -32,7 +32,7 @@ public class ThriftMutiServiceRpcProtocol extends AbstractProtocol{
 
     private static final Logger logger = LoggerFactory.getLogger(ThriftMutiServiceRpcProtocol.class);
 
-    public static final String NAME = "thrift2";
+    public static final String NAME = "thrift3";
 
     public static final int DEFAULT_PORT = 28089;
 
@@ -75,7 +75,7 @@ public class ThriftMutiServiceRpcProtocol extends AbstractProtocol{
                 }
 
                 RpcContext.getContext().setRemoteAddress(channel.getRemoteAddress());
-                String method = ThriftProtocalTools.getStringAtAbsoluteIndex(buf, 4);
+                String method = ThriftTools.getStringAtAbsoluteIndex(buf, 4);
                 Invocation inv = new RpcInvocation(method, null, new Object[]{buf});
                 return exporter.getInvoker().invoke(inv);
 

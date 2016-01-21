@@ -15,7 +15,7 @@ import org.apache.thrift.transport.TTransport;
 public class SimpleClient {
 	public static void main(String[] args) throws Exception {
 		
-		TTransport transport = new TSocket("localhost", 28088);//28088
+		TTransport transport = new TSocket("localhost", 28093);//28088
 
 		TProtocol protocol = new TBinaryProtocol(new TFramedTransport((transport)));
 		

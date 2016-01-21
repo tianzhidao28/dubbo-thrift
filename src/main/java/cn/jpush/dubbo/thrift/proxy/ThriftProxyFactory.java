@@ -3,8 +3,7 @@ package cn.jpush.dubbo.thrift.proxy;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import cn.jpush.dubbo.thrift.common.ThriftConstants;
-import cn.jpush.dubbo.thrift.common.ThriftProtocalTools;
+import cn.jpush.dubbo.thrift.common.ThriftTools;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.protocol.TProtocol;
@@ -49,7 +48,7 @@ public class ThriftProxyFactory extends AbstractProxyFactory{
             	ChannelBuffer input = (ChannelBuffer)arguments[arguments.length - 1];
             	ChannelBuffer output = ChannelBuffers.dynamicBuffer();
 
-        		TProtocol prot = ThriftProtocalTools.newBinaryProtocol(input, output);
+        		TProtocol prot = ThriftTools.newBinaryProtocol(input, output);
         		try {
         			processor.process(prot, prot);
         		} catch (Throwable t) {
@@ -57,7 +56,7 @@ public class ThriftProxyFactory extends AbstractProxyFactory{
 					input.resetReaderIndex();
 					TMessage tmessage = prot.readMessageBegin();
 					logger.debug("Thrift: in proxy invoke exeception; TMessage = "+tmessage);
-					ThriftProtocalTools.createErrorTMessage(prot, tmessage.name, tmessage.seqid, "Server-Side Error:" + t.toString());
+					ThriftTools.createErrorTMessage(prot, tmessage.name, tmessage.seqid, "Server-Side Error:" + t.toString());
         		} finally {
         			prot.getTransport().flush();
         		}
