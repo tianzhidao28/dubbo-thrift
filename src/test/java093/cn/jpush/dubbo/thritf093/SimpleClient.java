@@ -27,7 +27,7 @@ public class SimpleClient {
 				String str = client.getString("hello" + i);
 
 				System.out.println(str);
-				TimeUnit.SECONDS.sleep(1);
+				//TimeUnit.SECONDS.sleep(1);
 			} catch(Exception e) {
 //				System.out.println("--------------------" + i);
 //				System.out.println();

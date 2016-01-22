@@ -24,10 +24,12 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * todo 未完待续
  * @author rocyuan
  * @version thrift-> 0.9.3
  * @date 2016-01-18
  */
+@Deprecated
 public class ThriftMutiServiceRpcProtocol extends AbstractProtocol{
 
     private static final Logger logger = LoggerFactory.getLogger(ThriftMutiServiceRpcProtocol.class);

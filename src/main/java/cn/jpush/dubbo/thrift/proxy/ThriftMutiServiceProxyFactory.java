@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2016-01-18
  * @desc 对多路复用协议的支持
  */
+@Deprecated
 public class ThriftMutiServiceProxyFactory extends AbstractProxyFactory{
 
 	private static final Logger logger = LoggerFactory.getLogger(ThriftMutiServiceProxyFactory.class);
