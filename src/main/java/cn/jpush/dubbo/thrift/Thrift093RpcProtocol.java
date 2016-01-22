@@ -30,11 +30,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Thrift093RpcProtocol extends AbstractProxyProtocol{
 
     private static final Logger logger = LoggerFactory.getLogger(Thrift093RpcProtocol.class);
+
     public static final String NAME = "thrift093";
 
     public static final int DEFAULT_PORT = 28093;
 
-    // TODO
+    //Hsha目前已知道是最高效的
     public static final String SERVER_TYPE_KEY = "thrift_server_type";
 
     private static ConcurrentHashMap<String,ServerThread> serverThreads = new ConcurrentHashMap<>();

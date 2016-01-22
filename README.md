@@ -1,9 +1,11 @@
 # dubbo thrift协议扩展
 `
-(thrift2(?),thrift093(现在在系统里都使用这个协议),swift(暂时不支持)),以原生协议提供服务.
+(thrift2(?),thrift093(建议在系统里都使用这个协议),swift(暂时不支持)),以原生协议提供服务.
 
 thrift0.9.1之后开始支持多路复用;这里我新增的部分没有使用这一特性,所以理论上是支持从thrift0.8.0--thrift0.9.3之间的所有版本,
 但是 依然建议最好用thrift0.9.3.
+
+暂时支持thrift 二进制编码的形式: TBinaryProtocol
 
 `
 ## kill port :
@@ -83,7 +85,25 @@ TMultiplexedProtocol:
 
 * 现在发布在maven 第三方库测试 http://maven.jpushoa.com/nexus/content/repositories/thirdparty
 
-## 未完成
+
+
+## 以供参考:
+服务端代码   供写客户端参考
+```java
+
+TNonblockingServerSocket tnbSocketTransport = new TNonblockingServerSocket(port);
+org.apache.thrift.server.THsHaServer.Args thhsArgs = new THsHaServer.Args(tnbSocketTransport);
+thhsArgs.processor(processor);
+thhsArgs.transportFactory(new TFramedTransport.Factory());
+thhsArgs.protocolFactory(new TBinaryProtocol.Factory());
+
+
+```
+
+
+
+
+## todo list 未完成
 * thrift093协议 dubbo客户端未完成?(优先级最低)
 * 一些断开 重连重试 负载均衡源码查看,并实现thrift093协议的断开重连重试
 * 和spring 高版本兼容测试; 目前已知的是 spring3 和 spring4应该都没问题的;具体的版本兼容待测试; 建议4.0.9

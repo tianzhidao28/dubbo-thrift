@@ -22,7 +22,9 @@ import org.slf4j.LoggerFactory;
 
 import static cn.jpush.dubbo.thrift.common.ThriftServerType.*;
 
-
+/**
+ * Thrift工具类
+ */
 public class ThriftTools {
 
 	private static final Logger logger = LoggerFactory.getLogger(ThriftTools.class);
@@ -197,7 +199,19 @@ public class ThriftTools {
 		try{
 
 			switch (serverType) {
+
 				case TThreadPoolServer:
+
+
+				/**
+				 * TNonblockingServer使用非阻塞的I/O解决了TSimpleServer一个客户端阻塞其他所有客户端的问题。
+				 * 它使用了java.nio.channels.Selector，通过调用select()，它使得你阻塞在多个连接上，而不是阻塞在单一的连接上。
+				 * 当一或多个连接准备好被接受/读/写时，select()调用便会返回。TNonblockingServer处理这些连接的时候，要么接受它，要么从它那读数据，要么把数据写到它那里，然后再次调用select()来等待下一个可用的连接。
+				 * 通用这种方式，server可同时服务多个客户端，而不会出现一个客户端把其他客户端全部“饿死”的情况。
+				 *
+				 * 然而，还有个棘手的问题：所有消息是被调用select()方法的同一个线程处理的。假设有10个客户端，处理每条消息所需时间为100毫秒，那么，latency和吞吐量分别是多少？当一条消息被处理的时候，其他9个客户端就等着被select，
+				 * 所以客户端需要等待1秒钟才能从服务器端得到回应，吞吐量就是10个请求/秒。如果可以同时处理多条消息的话，会很不错吧？
+				 */
 				case TNonblockingServer:
 					TNonblockingServerSocket serverTransport = new TNonblockingServerSocket(port);
 					TThreadedSelectorServer.Args tArgs = new TThreadedSelectorServer.Args(serverTransport);
