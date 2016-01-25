@@ -1,5 +1,6 @@
 package cn.jpush.dubbo.thrift;
 
+import cn.jpush.alarm.AlarmClient;
 import cn.jpush.dubbo.thrift.common.ThriftServerType;
 import cn.jpush.dubbo.thrift.common.ThriftTools;
 import cn.jpush.dubbo.thrift.proxy.ThriftServiceClientProxyFactory;
@@ -51,33 +52,36 @@ public class Thrift093RpcProtocol extends AbstractProxyProtocol{
         ThriftServerType serverType = ThriftServerType.valueOf(serverTypeString);
 
         TServer server = null ;
-        String serviceName = type.getEnclosingClass().getName();
+        final String serviceName = type.getEnclosingClass().getName();
 
         TProcessor processor = ThriftTools.getTProcessClass(type,impl);
         server = ThriftTools.createTServer(serverType,port,processor);
 
+        // todo 此处添加 失败记录
+
         server.setServerEventHandler(new TServerEventHandler() {
             @Override
             public void preServe() {
-                logger.info("preServe");
+                logger.debug("{} preServe",serviceName);
             }
 
             @Override
             public ServerContext createContext(TProtocol input, TProtocol output) {
-                logger.info("createContext"+input.toString());
+                logger.debug("{} createContext"+input.toString(),serviceName);
                 return null;
             }
 
             @Override
             public void deleteContext(ServerContext serverContext, TProtocol input, TProtocol output) {
-                logger.info("deleteContext");
+                logger.debug("{} deleteContext",serviceName);
             }
 
             @Override
             public void processContext(ServerContext serverContext, TTransport inputTransport, TTransport outputTransport) {
-                logger.info("processContext ");
+                logger.debug("{} processContext ",serviceName);
             }
         });
+
         final ServerThread serverThread = new ServerThread(server, serviceName);
         serverThread.setDaemon(true);
         serverThread.start();
@@ -91,6 +95,8 @@ public class Thrift093RpcProtocol extends AbstractProxyProtocol{
             @Override
             public void run() {
                 if(finalServer != null && finalServer.isServing()) {
+                    // todo 前期留在上面 停止的时候 我可以知晓
+                    AlarmClient.send(81,"[请知晓]info : "+serviceName + " stop ");
                     finalServer.stop();
                 }
             }
