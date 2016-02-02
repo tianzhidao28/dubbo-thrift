@@ -54,16 +54,15 @@ pom.xml 添加 2个依赖就可以了:
 `必须使用 TBinary 协议 和 TFramedTransport `
 
 
-
 ## 协议支持:
 * thrift >= 0.8.0(暂时 0.8.0  0.9.3 都支持)
 
-
-## 新增thrift2,thrift093 协议
+## 新增 thrift2,thrift093,协议
 * thrift2 用netty 重写编码解码 连接的部分
 * thrift093 在thrift 0.9.3版本的基础上
 * swift协议暂时由于jdk编码问题还没加入进来测试,但是这个恐怕是最好的组合,无论用不用dubbo,swift都极大的简化了
 
+## 新增 container
 
 ## 注意:
 
@@ -102,7 +101,12 @@ thhsArgs.protocolFactory(new TBinaryProtocol.Factory());
 ```
 
 
+## changed :
 
+> 更改了 artifactId : dubbo-plugins
+
+    <groupId>cn.jpush</groupId>
+    <artifactId>dubbo-plugins</artifactId>
 
 ## todo list 未完成
 * thrift093协议 dubbo客户端未完成?(优先级最低)

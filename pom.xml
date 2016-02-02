@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.jpush</groupId>
-    <artifactId>dubbo-rpc-thrift</artifactId>
+    <artifactId>dubbo-plugins</artifactId>
     <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>dubbo-rpc-thrift</name>
     <url>http://maven.apache.org</url>
 
-    <description>thrift2协议摘自网上一段代码 慢慢改进去支持; thrift093 是参照源码里的其他协议改写的支持thrift 0.9.3 和 多路复用 </description>
+    <description>thrift2协议摘自网上一段代码 慢慢改进去支持; thrift093 是参照源码里的其他协议改写的支持thrift 0.9.3 和 多路复用(未写) </description>
 
 
     <properties>
@@ -189,7 +189,7 @@
     <distributionManagement>
         <repository>
             <id>jpush_maven</id>
-            <url>http://maven.jpushoa.com/nexus/content/repositories/thirdparty</url>
+            <url>http://maven.jpushoa.com/nexus/content/repositories/public</url>
         </repository>
     </distributionManagement>
 

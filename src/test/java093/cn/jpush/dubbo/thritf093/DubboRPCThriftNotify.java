@@ -13,6 +13,6 @@ public class DubboRPCThriftNotify {
     @Test
     public void testDubboRPCThrift() {
 
-        AlarmClient.send(81,"[忽略这条消息]dubbo-rpc-thrift 测试用例运行或发布..");
+        // AlarmClient.send(81,"[忽略这条消息]dubbo-rpc-thrift 测试用例运行或发布..");
     }
 }
