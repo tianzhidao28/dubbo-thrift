@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.jpush</groupId>
-    <artifactId>dubbo-plugins</artifactId>
-    <version>1.0.2</version>
+    <artifactId>jpush-dubbo-plugins</artifactId>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
-    <name>dubbo-rpc-thrift</name>
+    <name>jpush-dubbo-plugins</name>
     <url>http://maven.apache.org</url>
 
-    <description>thrift2协议摘自网上一段代码 慢慢改进去支持; thrift093 是参照源码里的其他协议改写的支持thrift 0.9.3 和 多路复用(未写) </description>
+    <description> dubbo的一些插件</description>
 
 
     <properties>
@@ -44,14 +44,28 @@
             <version>3.3.3</version>
             <scope>provided</scope>
         </dependency>
+
+
+
+
+        <dependency>
+            <groupId>cn.jpush</groupId>
+            <artifactId>alarm-client</artifactId>
+            <version>2.0.4</version>
+        </dependency>
+        <!-- dubbo -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dubbo</artifactId>
             <version>2.5.3</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.springframework</groupId>
                     <artifactId>spring</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -59,6 +73,7 @@
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
             <version>0.9.3</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -125,11 +140,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>cn.jpush</groupId>
-            <artifactId>alarm-client</artifactId>
-            <version>2.0.4</version>
-        </dependency>
+
     </dependencies>
 
 
@@ -161,14 +172,53 @@
                     </execution>
                 </executions>
             </plugin>
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.9.0</version>
+                <configuration>
+                    <header>NOTICE</header>
+                    <includes>
+                        <include>**/*.java</include>
+                        <include>**/*.xml</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/.*/**</exclude>
+                        <exclude>target/**</exclude>
+                        <exclude>**/*.xml</exclude>
+                    </excludes>
+                    <properties>
+                        <year>2015</year>
+                        <name>rocyuan</name>
+                    </properties>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <strictCheck>true</strictCheck>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check-headers</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
         </plugins>
         <!--<finalName>developer-commons</finalName>-->
     </build>
@@ -185,6 +235,21 @@
             </snapshots>
         </repository>
     </repositories>
+
+
+
+    <developers>
+        <developer>
+            <name>yuanzp</name>
+            <id>rocyuan</id>
+            <email>yuanzp (AT) jpush.cn</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+
 
     <distributionManagement>
         <repository>
