@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
+ * todo 可以参照 RMI的实现;增加自动重连
  * 缓存 TServiceClient客户端
  * Created by rocyuan on 16/1/21.
  */
