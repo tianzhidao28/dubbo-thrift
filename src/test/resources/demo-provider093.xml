@@ -12,7 +12,8 @@
 
 	<dubbo:application name="rocyuan-provider-01" owner="rocyuan"/>
 
-	<dubbo:registry address="zookeeper://localhost:2181?proxy=thrift2"/>
+	<dubbo:registry address="zookeeper://localhost:2181"/>
+	<!--<dubbo:registry address="zookeeper://localhost:2181?proxy=thrift2"/>-->
 
 	    <!-- 用registry协议配置监视器 -->
     <!-- <dubbo:monitor protocol="registry" /> -->
@@ -20,11 +21,12 @@
 	<!--<dubbo:protocol id="thrift_1" name="thrift2" server="netty2" client="netty2"-->
 	<!--threads="100"  payload="8192"/>-->
 
-	<dubbo:protocol id="thrift093" name="thrift093" />
+	<dubbo:protocol id="thrift093" name="thrift093"/>
 		
 	<bean id="helloService" class="cn.jpush.dubbo.thritf093.HelloServiceImpl" />
 	<dubbo:service interface="cn.jpush.dubbo.thritf093.HelloService$Iface"
 		ref="helloService" protocol="thrift093">
+		<dubbo:parameter key="thrift_server_type" value="TNonblockingServer"></dubbo:parameter>
 	</dubbo:service>
 
 </beans>

@@ -42,6 +42,8 @@ pom.xml 添加 2个依赖就可以了:
  </dependency>
 
 
+已经更名为 jpush-dubbo-plugins
+
 
 
 <dubbo:protocol id="thrift093" name="thrift093" />
@@ -117,3 +119,19 @@ thhsArgs.protocolFactory(new TBinaryProtocol.Factory());
 * 监控项目:(部署两套 dubbo官方的一套,第三方的一套)
 * 多路复用的实现
 * SOA后期优化,dubbo项目部署优化 ( 容器部署 和 jar包共享 )
+
+
+
+
+## dubbo + thrift
+```
+<dubbo:service interface="cn.jpush.dubbo.thritf093.HelloService$Iface"
+		ref="helloService" protocol="thrift093">
+		<dubbo:parameter key="thrift_server_type" value="TNonblockingServer"></dubbo:parameter>
+	</dubbo:service>
+```
+
+
+## NEW COMMON
+
+* dubbo thrift java 的客户端没写 感觉没必要  java调用java 我特默就不用thrift了.

@@ -4,7 +4,7 @@
 
     <groupId>cn.jpush</groupId>
     <artifactId>jpush-dubbo-plugins</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.4</version>
     <packaging>jar</packaging>
 
     <name>jpush-dubbo-plugins</name>
@@ -45,9 +45,6 @@
             <scope>provided</scope>
         </dependency>
 
-
-
-
         <dependency>
             <groupId>cn.jpush</groupId>
             <artifactId>alarm-client</artifactId>
@@ -86,7 +83,7 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.16</version>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -131,7 +128,6 @@
             <version>${spring.version}</version>
             <scope>${spring.scope}</scope>
         </dependency>
-
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -185,42 +181,41 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.9.0</version>
-                <configuration>
-                    <header>NOTICE</header>
-                    <includes>
-                        <include>**/*.java</include>
-                        <include>**/*.xml</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/.*/**</exclude>
-                        <exclude>target/**</exclude>
-                        <exclude>**/*.xml</exclude>
-                    </excludes>
-                    <properties>
-                        <year>2015</year>
-                        <name>rocyuan</name>
-                    </properties>
-                    <useDefaultExcludes>true</useDefaultExcludes>
-                    <strictCheck>true</strictCheck>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>check-headers</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>com.mycila.maven-license-plugin</groupId>-->
+                <!--<artifactId>maven-license-plugin</artifactId>-->
+                <!--<version>1.9.0</version>-->
+                <!--<configuration>-->
+                    <!--<header>NOTICE</header>-->
+                    <!--<includes>-->
+                        <!--<include>**/*.java</include>-->
+                        <!--<include>**/*.xml</include>-->
+                    <!--</includes>-->
+                    <!--<excludes>-->
+                        <!--<exclude>**/.*/**</exclude>-->
+                        <!--<exclude>target/**</exclude>-->
+                        <!--<exclude>**/*.xml</exclude>-->
+                    <!--</excludes>-->
+                    <!--<properties>-->
+                        <!--<year>2015</year>-->
+                        <!--<name>rocyuan</name>-->
+                    <!--</properties>-->
+                    <!--<useDefaultExcludes>true</useDefaultExcludes>-->
+                    <!--<strictCheck>false</strictCheck>-->
+                <!--</configuration>-->
+                <!--&lt;!&ndash;<executions>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<execution>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<id>check-headers</id>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<phase>verify</phase>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<goals>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<goal>check</goal>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</goals>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</execution>&ndash;&gt;-->
+                <!--&lt;!&ndash;</executions>&ndash;&gt;-->
+            <!--</plugin>-->
 
 
         </plugins>
-        <!--<finalName>developer-commons</finalName>-->
     </build>
     <repositories>
         <repository>
@@ -254,9 +249,8 @@
     <distributionManagement>
         <repository>
             <id>jpush_maven</id>
-            <url>http://maven.jpushoa.com/nexus/content/repositories/public</url>
+            <url>http://maven.jpushoa.com/nexus/content/repositories/jpush</url>
         </repository>
     </distributionManagement>
-
 
 </project>

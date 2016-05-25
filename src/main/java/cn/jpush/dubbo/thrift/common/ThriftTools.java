@@ -246,8 +246,9 @@ public class ThriftTools {
 		} catch (Exception e) {
 			// 发送异常告警: 异常的服务启动需要上服务器查看,可能上端口占用,解决指令: lsof -i tcp:28088;lsof -i tcp:28088 | awk ' NR > 1 {print $2}' | xargs kill -9
 			String serviceName = processor.getClass().getName().replaceAll("^.*\\$$","");
-			String msg = String.format("dubbo_thrift组件里:%s 启动异常,可能端口占用",serviceName);
+			String msg = String.format("dubbo_thrift组件里:%s 启动异常,%s",serviceName,e.getMessage());
 			AlarmClient.send(81,msg);
+			e.printStackTrace();
 
 		}
 

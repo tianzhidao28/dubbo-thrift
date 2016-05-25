@@ -5,6 +5,7 @@ import cn.jpush.dubbo.thrift.common.ThriftServerType;
 import cn.jpush.dubbo.thrift.common.ThriftTools;
 import cn.jpush.dubbo.thrift.proxy.ThriftServiceClientProxyFactory;
 import com.alibaba.dubbo.common.URL;
+import com.alibaba.dubbo.common.utils.Assert;
 import com.alibaba.dubbo.rpc.*;
 import com.alibaba.dubbo.rpc.protocol.AbstractProxyProtocol;
 import org.apache.thrift.TProcessor;
@@ -51,13 +52,14 @@ public class Thrift093RpcProtocol extends AbstractProxyProtocol{
         int port = url.getPort(DEFAULT_PORT);
         ThriftServerType serverType = ThriftServerType.valueOf(serverTypeString);
 
+        Assert.notNull(serverType,"Thrift 服务的类型有错误: TThreadPoolServer,TNonblockingServer,THsHaServer");
+
+        System.out.println("ThriftServerType = "+serverTypeString);
         TServer server = null ;
         final String serviceName = type.getEnclosingClass().getName();
 
         TProcessor processor = ThriftTools.getTProcessClass(type,impl);
         server = ThriftTools.createTServer(serverType,port,processor);
-
-        // todo 此处添加 失败记录
 
         server.setServerEventHandler(new TServerEventHandler() {
             @Override
@@ -108,7 +110,7 @@ public class Thrift093RpcProtocol extends AbstractProxyProtocol{
         return stopRun;
     }
 
-    // todo 未完成
+    // todo 未完成  参照RMI 去实现自动重连 和 连接保持
     @Override
     protected <T> T doRefer(Class<T> serviceType, URL url) throws RpcException {
         String ip = url.getIp();

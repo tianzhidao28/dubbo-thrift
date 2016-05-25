@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * todo 未完待续
+ * todo 未完待续  多路复用
  * @author rocyuan
  * @version thrift-> 0.9.3
  * @date 2016-01-18
